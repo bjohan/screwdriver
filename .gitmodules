@@ -1,0 +1,3 @@
+[submodule "scad/threadlib"]
+	path = scad/threadlib
+	url = https://github.com/adrianschlatter/threadlib.git
