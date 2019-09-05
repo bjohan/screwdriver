@@ -185,10 +185,13 @@ module microSwitch(){
     }
 }
 
-translate([0,-switchW/2,bodyL+5]){
-translate([-0.3,0,0]) rotate([0,-90,0]) microSwitch();
-translate([0.3,0,switchBodyLength])rotate([0,90,0]) microSwitch();
+translate([0,switchW/2,bodyL+5]){
+translate([-0.3,0,switchBodyLength]) rotate([180,0,0]) rotate([0,-90,0]) microSwitch();
+translate([0.3+6,0,switchBodyLength])rotate([180,0,0]) rotate([0,-90,0]) microSwitch();
 }
+
+
+
 
 //switchPanel();
 //coupling();
