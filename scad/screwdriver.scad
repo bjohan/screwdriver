@@ -37,7 +37,7 @@ switchW = switchBodyW + switchPinLength;
 switchOffset = 5;
 
 dcDcX = 17;
-dcDcY = 15;
+dcDcY = 11;
 dcDcZ = 34;
 
 
@@ -227,7 +227,10 @@ module switchCavity(){
         microSwitch(body=false, pins=false);
         microSwitch(body=false, pins=false, angle = 0);
     }
-    microSwitch(lever = false);
+    hull(){
+        microSwitch(lever = false);
+        translate([-100,0,0])microSwitch(lever = false);
+    }
 }
 
 module switchCavityHole(tol =0.3 ){
@@ -267,7 +270,8 @@ module dcDcVolume(){
 }
 
 
-dcDcVolume();
+//translate([0,0,driveTrainBodyL+switchOffset+switchBodyLength])dcDcVolume();
+body();
 
 //chargerPcbCavity(10);
 
@@ -281,5 +285,5 @@ dcDcVolume();
 //coupling();
 //endCap();
 //rotate([180,0,0]) body();
-cutAwayAssembly();
+//cutAwayAssembly();
 //assembly();
