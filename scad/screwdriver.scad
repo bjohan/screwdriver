@@ -36,6 +36,12 @@ switchPinLength = 3;
 switchW = switchBodyW + switchPinLength;
 switchOffset = 5;
 
+dcDcX = 17;
+dcDcY = 15;
+dcDcZ = 34;
+
+
+
 bodyIR = couplingR+0.15;
 bodyT = 2;
 bodyOR = bodyIR+bodyT;
@@ -43,6 +49,7 @@ driveTrainBodyL = couplingL + bearingH + gearBoxL + motorL;
 bodyL = driveTrainBodyL+switchBodyLength+switchOffset;
 switchBodyOR = 11;
 endCapL = 5;
+
 
 
 module coupling(){
@@ -149,6 +156,7 @@ module assembly(){
     placeMotor() motor();
     body();
     endCap();
+    placeSwitch() microSwitch();
 }
 
 module endCap(){
@@ -165,7 +173,7 @@ module endCap(){
 module cutAwayAssembly(){
     difference(){
     assembly();
-        translate([-50,0,-10])cube(100);
+        rotate([0,0,-90-45])translate([-50,0,-10])cube(100);
     }
 }
 
@@ -251,12 +259,21 @@ module chargerPcb(cel=0){
 
 module chargerPcbCavity(el){
     chargerPcb(el);
+
 }
-chargerPcbCavity(10);
+
+module dcDcVolume(){
+    color([0,1,0]) translate(-[dcDcX/2, dcDcY/2, 0]) cube([dcDcX, dcDcY, dcDcZ]);
+}
+
+
+dcDcVolume();
+
+//chargerPcbCavity(10);
 
 //battery();
 
-//placeSwitch() microSwitch();//microSwitch();
+////microSwitch();
 
 
 
@@ -264,5 +281,5 @@ chargerPcbCavity(10);
 //coupling();
 //endCap();
 //rotate([180,0,0]) body();
-//cutAwayAssembly();
+cutAwayAssembly();
 //assembly();
