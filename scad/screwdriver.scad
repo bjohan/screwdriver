@@ -238,7 +238,25 @@ module placeSwitch(){
     }   
 }
 
-placeSwitch() microSwitch();//microSwitch();
+
+module battery(){
+    color([0,0,1])
+    cylinder(50, 7, 7);
+}
+
+module chargerPcb(cel=0){
+    color([0,1,0]) translate([-11, -9,0])cube([22,18,1.6]);
+    color([0.5,0.5,0.5]) translate([-11-1-cel, -4,1.6])cube([9+cel,8,4]);
+}
+
+module chargerPcbCavity(el){
+    chargerPcb(el);
+}
+chargerPcbCavity(10);
+
+//battery();
+
+//placeSwitch() microSwitch();//microSwitch();
 
 
 
@@ -247,4 +265,4 @@ placeSwitch() microSwitch();//microSwitch();
 //endCap();
 //rotate([180,0,0]) body();
 //cutAwayAssembly();
-assembly();
+//assembly();
