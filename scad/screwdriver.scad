@@ -25,12 +25,8 @@ couplingDR = 3/2+0.20;
 couplingDRD = 2.5/2+0.15;
 couplingL = couplingHexLength+couplingdLength;
 
-bodyIR = couplingR+0.15;
-bodyT = 2;
-bodyOR = bodyIR+bodyT;
-bodyL = couplingL + bearingH + gearBoxL + motorL;
 
-endCapL = 5;
+
 
 printTol = 0.4;
 
@@ -38,6 +34,16 @@ switchBodyLength = 20;
 switchBodyW = 11;
 switchPinLength = 3;
 switchW = switchBodyW + switchPinLength;
+switchOffset = 5;
+
+bodyIR = couplingR+0.15;
+bodyT = 2;
+bodyOR = bodyIR+bodyT;
+driveTrainBodyL = couplingL + bearingH + gearBoxL + motorL;
+bodyL = driveTrainBodyL+switchBodyLength+switchOffset;
+switchBodyOR = 11;
+endCapL = 5;
+
 
 module coupling(){
     color([0,1,0])
@@ -88,11 +94,22 @@ module motor(){
     translate([0, 0,shaftL]) gearBox();
 }
 
+
+module tube(l, t, rl, rh){
+    difference(){
+            cylinder(l, rl, rh);
+            cylinder(l, rl-t, rh-t);
+            }
+}
+
 module body(){
     difference(){
         union(){
-            cylinder(bodyL, bodyOR, bodyOR);
+            cylinder(driveTrainBodyL, bodyOR, bodyOR);
             metric_thread (diameter= bodyOR*2+2.17, pitch=2, length=endCapL);
+            
+            translate([0,0,driveTrainBodyL])  tube(switchOffset, bodyT, bodyOR, switchBodyOR);
+            translate([0,0,driveTrainBodyL+switchOffset]) tube(switchBodyLength, bodyT, switchBodyOR, switchBodyOR);
         }
         //translate([0,0,-1]) cylinder(couplingL+bearingH+1, bodyIR, bodyIR);
         placeBearing() minkowski(){ hull() {bearing();} sphere(printTol);};
@@ -110,7 +127,12 @@ module body(){
             }
             translate([0,0,-0.1])cylinder(0.2,printTol, printTol);
         }
+        
+        placeSwitch() switchCavityHole();
+        
     }
+    
+    
 }
 
 module placeBearing(){
@@ -165,31 +187,58 @@ module microSwitchLever(){
     }
 }
 
-module microSwitch(){
-    color([0,0,0])
-    difference(){
-        cube([20, 11, 6]);
-        translate([0,0,-1]){
-            translate([5,8,0])
-            cylinder(8,2.5/2,2.5/2);
-            translate([15,8,0])
-            cylinder(8,2.5/2,2.5/2);
+module microSwitch(body = true, lever = true, pins = true, angle = -10){
+    if(body){
+        color([0,0,0])
+        difference(){
+            cube([20, 11, 6]);
+            translate([0,0,-1]){
+                translate([5,8,0])
+                cylinder(8,2.5/2,2.5/2);
+                translate([15,8,0])
+                cylinder(8,2.5/2,2.5/2);
+            }
         }
     }
-    color([1,0,0]) translate([7,0,0])cylinder(4,1,1);
-    translate([4,1.2,0]) rotate([0,0,-10]) microSwitchLever();
-    color([0.3, 0.3, 0.3]) translate([0,11,1.5]){
-        translate([1.5,0,0])cube([.5,4,3]);
-        translate([9,0,0])cube([.5,4,3]);
-        translate([18,0,0])cube([.5,4,3]);
+    if(lever){
+        color([1,0,0]) translate([7,0,1])cylinder(4,1,1);
+        translate([4,1.2,1]) rotate([0,0,angle]) microSwitchLever();
+    }
+    
+    if(pins){
+        color([0.3, 0.3, 0.3]) translate([0,11,1.5]){
+            translate([1.5,0,0])cube([.5,4,3]);
+            translate([9,0,0])cube([.5,4,3]);
+            translate([18,0,0])cube([.5,4,3]);
+        }
     }
 }
 
-translate([0,switchW/2,bodyL+5]){
-translate([-0.3,0,switchBodyLength]) rotate([180,0,0]) rotate([0,-90,0]) microSwitch();
-translate([0.3+6,0,switchBodyLength])rotate([180,0,0]) rotate([0,-90,0]) microSwitch();
+module switchCavity(){
+    hull(){
+        microSwitch(body=false, pins=false);
+        microSwitch(body=false, pins=false, angle = 0);
+    }
+    microSwitch(lever = false);
 }
 
+module switchCavityHole(tol =0.3 ){
+    minkowski(){
+        switchCavity();
+        sphere(tol);
+            
+        }
+            
+}
+
+module placeSwitch(){
+    translate([0,switchW/2,driveTrainBodyL+switchOffset]){
+        translate([-0.3,0,switchBodyLength]) rotate([180,0,0]) rotate([0,-90,0]) children();
+        translate([0.3+6,0,switchBodyLength])rotate([180,0,0]) rotate([0,-90,0]) children();
+    }   
+}
+
+placeSwitch() microSwitch();//microSwitch();
 
 
 
