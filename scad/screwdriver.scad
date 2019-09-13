@@ -35,21 +35,24 @@ switchBodyW = 11;
 switchPinLength = 3;
 switchW = switchBodyW + switchPinLength;
 switchOffset = 5;
+switchBodyOR = 11;
 
 dcDcX = 17;
 dcDcY = 11;
 dcDcZ = 34;
 
+dcDcChargerOffset = 3;
 
+electronicR = switchBodyOR;
+electronicL =dcDcZ+dcDcChargerOffset+3;
 
 bodyIR = couplingR+0.15;
 bodyT = 2;
 bodyOR = bodyIR+bodyT;
 driveTrainBodyL = couplingL + bearingH + gearBoxL + motorL;
 bodyL = driveTrainBodyL+switchBodyLength+switchOffset;
-switchBodyOR = 11;
-endCapL = 5;
 
+endCapL = 5;
 
 
 module coupling(){
@@ -117,6 +120,7 @@ module body(){
             
             translate([0,0,driveTrainBodyL])  tube(switchOffset, bodyT, bodyOR, switchBodyOR);
             translate([0,0,driveTrainBodyL+switchOffset]) tube(switchBodyLength, bodyT, switchBodyOR, switchBodyOR);
+            placeElectronicsBody() electronicsBody();
         }
         //translate([0,0,-1]) cylinder(couplingL+bearingH+1, bodyIR, bodyIR);
         placeBearing() minkowski(){ hull() {bearing();} sphere(printTol);};
@@ -266,14 +270,31 @@ module chargerPcbCavity(el){
 }
 
 module dcDcVolume(){
+    
+module electronicsBody(){
+}
     color([0,1,0]) translate(-[dcDcX/2, dcDcY/2, 0]) cube([dcDcX, dcDcY, dcDcZ]);
 }
 
 
-//translate([0,0,driveTrainBodyL+switchOffset+switchBodyLength])dcDcVolume();
-body();
+module placeElectronicsBody(){
+    translate([0,0,bodyL]) children();
+}
 
-//chargerPcbCavity(10);
+module electronicsBody(){
+    
+    difference(){
+        union(){
+            tube(electronicL, bodyT, electronicR, electronicR);
+            difference(){
+                translate([0,0,electronicL-endCapL])metric_thread(diameter= electronicR*2+2.17, pitch=2, length=endCapL);
+                cylinder(electronicL, electronicR-bodyT, electronicR-bodyT);
+            }
+        }
+        dcDcVolume();
+    }
+}
+
 
 //battery();
 
@@ -285,5 +306,5 @@ body();
 //coupling();
 //endCap();
 //rotate([180,0,0]) body();
-//cutAwayAssembly();
+cutAwayAssembly();
 //assembly();
