@@ -3,6 +3,10 @@ bearingIR = 6/2;
 bearingOR = 14/2;
 bearingH = 5;
 
+radBearingOR = 10/2;
+radBearingIR = 6/2;
+radBearingH = 3;
+
 motorFlatR = 10/2;
 motorR = 12/2;
 motorBR = 5/2;
@@ -55,12 +59,17 @@ bodyL = driveTrainBodyL+switchBodyLength+switchOffset;
 endCapL = 5;
 
 
+
 module coupling(){
     color([0,1,0])
     difference(){
         union(){
-            cylinder(couplingL,couplingR, couplingR);
-            cylinder(couplingL+bearingH-2,bearingIR, bearingIR);
+            translate([0,0,radBearingH]){
+                cylinder(couplingL-radBearingH,couplingR, couplingR);
+                cylinder(couplingL+bearingH-2-radBearingH,bearingIR, bearingIR);
+                
+            }
+            cylinder(radBearingH, radBearingIR, radBearingIR);
         }
         translate([0,0,-1])cylinder(couplingHexLength+1, couplingHexR,couplingHexR,$fn=6);
         translate([0,0,couplingHexLength-1]) dCylinder(couplingdLength+2+bearingH, couplingDR,couplingDRD);;
@@ -88,6 +97,16 @@ module bearing(){
         cylinder(bearingH, bearingOR, bearingOR);
         translate([0,0,-1])
         cylinder(bearingH+2, bearingIR, bearingIR);
+    }
+}
+
+
+module radBearing(){
+    color([0,0,1])
+    difference(){
+        cylinder(radBearingH, radBearingOR, radBearingOR);
+        translate([0,0,-1])
+        cylinder(radBearingH+2, radBearingIR, radBearingIR);
     }
 }
 
@@ -295,6 +314,8 @@ module electronicsBody(){
     }
 }
 
+
+radBearing();
 
 //battery();
 
