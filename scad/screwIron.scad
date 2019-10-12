@@ -10,7 +10,11 @@ freeClearance = 0.4;
 screwR = 3/2;
 screwTowerR = screwR+2;
 
-
+pcbWidth = 32.5;
+pcbLength = 42;
+switchXposOnPcb=pcbLength-9.5;
+switchAYPosOnPcb=pcbWidth-3.2;
+switchBYPosOnPcb=pcbWidth-12.7;
 
 module stadiumVolume(r,h,s){
     hull(){
@@ -99,8 +103,8 @@ module mainBody(){
         
         placeScrewTowers() screw();
         
-        translate([bodyWidth/2,bodyRMin,bodyHeight-11]) rotate([-90,90,180])chargerPcb(10);
-        
+        //translate([bodyWidth/2,bodyRMin,bodyHeight-11]) rotate([-90,90,180])chargerPcb(10);
+        placePcbPrototype2() pcbPrototype2(11);
         translate([bodyWidth/2,bodyRMin-0.4,bodyHeight/6]){ 
             /*rotate([-90,0,0]){
                 minkowski(){
@@ -142,9 +146,9 @@ module screw(){
 
 module placeScrewTowers(){
     translate([bodyRMin+screwTowerR,0,2]) children();
-    translate([bodyRMin+screwTowerR,0,driveTrainBodyL-screwTowerR-bodyT]) children();
+    translate([bodyRMin+screwTowerR-3,0,driveTrainBodyL-screwTowerR-bodyT]) children();
     translate([bodyRMin+screwTowerR+30,0,2]) children();
-    translate([bodyRMin+screwTowerR+30,0,driveTrainBodyL-screwTowerR-bodyT]) children();
+    translate([bodyRMin+screwTowerR+37,0,driveTrainBodyL-screwTowerR-bodyT]) children();
 }
 
 
@@ -181,8 +185,35 @@ module chargerPcb(cel=0){
     color([0.5,0.5,0.5]) translate([-11-1-cel, -4,1.6])cube([9+cel,8,4]);
 }
 
+module placeSwitchesOnPcb(){
+    translate([switchXposOnPcb,0 ,0]){
+        translate([0,switchAYPosOnPcb,0]) children();
+        translate([0,switchBYPosOnPcb,0]) children();
+    }
+}
 
-frontHalf() mainBody();
+module pcbPrototype2(cel=0){
+    
+    color([0.5,0.5,0.5]) translate([-(cel), 4.5,1.6])cube([9+cel,8,4]);
+    color([0,1,0]) translate([0, 0,0])cube([pcbLength,pcbWidth,1.6]);
+    color([1,0,1]) translate([0, 0,1.6]) placeSwitchesOnPcb() switch();
+}
+
+module placePcbPrototype2(){
+translate([bodyWidth/2-pcbWidth/2+3,bodyRMin,bodyHeight-1]) rotate([-90,90,180]) children();
+}
+
+module frontBody(){
+    frontHalf() mainBody();
+}
+
+module backBody(){
+    backHalf() mainBody();
+}
+placePcbPrototype2() pcbPrototype2(0);
+
+//frontHalf() mainBody();
+backBody();
 //rotate([90,0,0]) backHalf() mainBody();
 
 //rotate([-90,0,0]) frontHalf() mainBody();
