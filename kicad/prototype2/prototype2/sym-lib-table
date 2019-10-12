@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name screwdriver_lib)(type Legacy)(uri /home/bjohan/git_wd/screwdriver/kicad/prototype2/prototype2/screwdriver_lib.lib)(options "")(descr ""))
+)
